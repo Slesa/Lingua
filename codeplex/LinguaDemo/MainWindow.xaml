@@ -1,0 +1,42 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="LinguaDemo.MainWindow" Name="ctrlMainWindow"
+        Title="Lingua Demo" Height="226" Width="444" Background="Cornsilk">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Menu Name="mnuMain"
+              Grid.Row="0">
+            <MenuItem Name="mnuFile" Header="_File">
+                <MenuItem Name="mnuFileExit" Header="E_xit" Click="mnuFileExit_Click" />
+            </MenuItem>
+        </Menu>
+        <TabControl Grid.Row="1">
+            <TabItem Header="Main">
+                <StackPanel>
+                    <Label>Expression:</Label>
+                    <TextBox Name="txtExpression" />
+                    <Label>Result:</Label>
+                    <TextBox IsReadOnly="True" IsTabStop="False" Name="txtResult" />
+                    <Button Name="btnEvaluate" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Click="btnEvaluate_Click" Margin="0,3" IsDefault="True">_Evaluate</Button>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Trace">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBox Name="txtTrace" 
+                             Grid.Row="0"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Stretch" />
+                    <Button  Name="btnClear"
+                             Grid.Row="1" 
+                             HorizontalAlignment="Left" Margin="0,3" Click="btnClear_Click">Clear</Button>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

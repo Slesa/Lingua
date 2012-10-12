@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Lingua.Parser">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="m_initialState" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Parser.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Lingua.ParserStack">
+    <Position X="2.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>ParserStack.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Lingua.ParserState">
+    <Position X="6.5" Y="2.5" Width="1.5" />
+    <Members>
+      <Field Name="m_id" Hidden="true" />
+    </Members>
+    <AssociationLine Name="m_actions" Type="Lingua.ParserAction" FixedFromPoint="true">
+      <Path>
+        <Point X="8" Y="2.744" />
+        <Point X="10.75" Y="2.744" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="m_gotos" Type="Lingua.ParserState" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8" Y="2.971" />
+        <Point X="9.271" Y="2.971" />
+        <Point X="9.271" Y="3.39" />
+        <Point X="8" Y="3.39" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAIABQAAAAAAAgAAAAAAAAAAQEAAAAAAAAQAA=</HashCode>
+      <FileName>ParserState.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="m_actions" />
+      <Field Name="m_gotos" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Lingua.ParserStackElement">
+    <Position X="3" Y="1.75" Width="1.75" />
+    <Members>
+      <Field Name="m_languageElement" Hidden="true" />
+      <Field Name="m_state" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAACAAAAACAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ParserStackElement.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="LanguageElement" />
+      <Property Name="State" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Lingua.ParserAction">
+    <Position X="10.75" Y="2.5" Width="1.25" />
+    <Members>
+      <Field Name="m_actionType" Hidden="true" />
+      <Method Name="ParserAction" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAgAAA=</HashCode>
+      <FileName>ParserAction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Lingua.ParserActionShift">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <Members>
+      <Field Name="m_state" Hidden="true" />
+      <Method Name="ParserActionShift" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ParserActionShift.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="State" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Lingua.ParserActionReduce">
+    <Position X="12" Y="4.5" Width="1.75" />
+    <Members>
+      <Field Name="m_rule" Hidden="true" />
+      <Method Name="ParserActionReduce" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ParserActionReduce.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Rule" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Lingua.RuleType" Collapsed="true">
+    <Position X="15" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>FAIAAAAAAAAIAIQEAAAAAAQACAAAAAAAAAQAAQAACAA=</HashCode>
+      <FileName>RuleType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Lingua.LanguageElement" Collapsed="true">
+    <Position X="6.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>LanguageElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Lingua.ParserActionAccept">
+    <Position X="10.5" Y="6" Width="1.75" />
+    <Members>
+      <Method Name="ParserActionAccept" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ParserActionAccept.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

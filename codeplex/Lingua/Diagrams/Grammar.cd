@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Lingua.Nonterminal">
+    <Position X="3" Y="2.75" Width="1.5" />
+    <Members>
+      <Method Name="Nonterminal" Hidden="true" />
+    </Members>
+    <AssociationLine Name="ElementType" Type="Lingua.NonterminalType" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.5" Y="3" />
+        <Point X="7.833" Y="3" />
+        <Point X="7.833" Y="4.312" />
+        <Point X="9.5" Y="4.312" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.1" Y="0.06" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Nonterminal.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ElementType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Lingua.Terminal">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <Members>
+      <Method Name="Terminal" Hidden="true" />
+    </Members>
+    <AssociationLine Name="ElementType" Type="Lingua.TerminalType" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2" Y="3" />
+        <Point X="2.375" Y="3" />
+        <Point X="2.375" Y="4.312" />
+        <Point X="5.75" Y="4.312" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.102" Y="0.058" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAACAAAAAAACAAAAAA=</HashCode>
+      <FileName>Terminal.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ElementType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Lingua.RuleType">
+    <Position X="12.25" Y="4" Width="1.5" />
+    <Members>
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="Invoke" Hidden="true" />
+      <Field Name="m_delegate" Hidden="true" />
+      <Field Name="m_fullName" Hidden="true" />
+      <Field Name="m_lhs" Hidden="true" />
+      <Field Name="m_name" Hidden="true" />
+      <Field Name="m_priority" Hidden="true" />
+      <Field Name="m_rhs" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="RuleType" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Delegate Name="Lingua.RuleType.Invoker" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>RuleType.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <AssociationLine Name="Lhs" Type="Lingua.NonterminalType" FixedFromPoint="true">
+      <Path>
+        <Point X="12.25" Y="4.793" />
+        <Point X="11" Y="4.793" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.11" Y="0.05" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>FAIAAAAAAAAIAIAEgAAAAAQACAAAAIAAAAQAAQAACiA=</HashCode>
+      <FileName>RuleType.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Lhs" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Rhs" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Lingua.NonterminalType">
+    <Position X="9.5" Y="4" Width="1.5" />
+    <Members>
+      <Method Name="CreateNonterminal" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Field Name="m_constructor" Hidden="true" />
+      <Field Name="m_fullName" Hidden="true" />
+      <Field Name="m_isStart" Hidden="true" />
+      <Field Name="m_name" Hidden="true" />
+      <Field Name="m_rules" Hidden="true" />
+      <Method Name="NonterminalType" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Delegate Name="Lingua.NonterminalType.Constructor" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>NonterminalType.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <AssociationLine Name="Rules" Type="Lingua.RuleType" FixedFromPoint="true">
+      <Path>
+        <Point X="11" Y="4.312" />
+        <Point X="12.25" Y="4.312" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.102" Y="0.058" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>EgIAFAAAAAAAAIAAgAAIgAQAAAAQAIAAAAAAgAAAAiA=</HashCode>
+      <FileName>NonterminalType.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Rules" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Lingua.TerminalType">
+    <Position X="5.75" Y="4" Width="1.5" />
+    <Members>
+      <Method Name="CreateTerminal" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Field Name="m_constructor" Hidden="true" />
+      <Field Name="m_fullName" Hidden="true" />
+      <Field Name="m_isStop" Hidden="true" />
+      <Field Name="m_name" Hidden="true" />
+      <Method Name="operator !=" Hidden="true" />
+      <Method Name="operator ==" Hidden="true" />
+      <Method Name="TerminalType" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Delegate Name="Lingua.TerminalType.Constructor" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>TerminalType.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>EAIABAAAAAAAgIAAgEAAAAQAAAAQCIAAAAAAAAAAAiA=</HashCode>
+      <FileName>TerminalType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Lingua.LanguageElement">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <Members>
+      <Method Name="LanguageElement" Hidden="true" />
+      <Field Name="m_elementType" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>LanguageElement.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ElementType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Lingua.LanguageElementType">
+    <Position X="7.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAIAAgAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LanguageElementType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
