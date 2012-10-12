@@ -11,7 +11,7 @@ let authors = ["R. Todd", "J. Preiss"]
 TraceEnvironmentVariables()
 
 // Directories
-let binDir = @".\Binaries\"
+let binDir = @".\deploy\"
 let buildDir = binDir @@ @"build\"
 let testDir = binDir @@ @"test\"
 let reportDir = binDir @@ @"report\"
