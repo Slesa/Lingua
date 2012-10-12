@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Lingua
@@ -24,8 +25,8 @@ namespace Lingua
     /// </remarks>
     public class Grammar : IGrammar
     {
-        private readonly Dictionary<Type, TerminalType> _terminals = new Dictionary<Type, TerminalType>();
-        private readonly Dictionary<Type, NonterminalType> _nonterminals = new Dictionary<Type, NonterminalType>();
+        readonly Dictionary<Type, TerminalType> _terminals = new Dictionary<Type, TerminalType>();
+        readonly Dictionary<Type, NonterminalType> _nonterminals = new Dictionary<Type, NonterminalType>();
 
         /// <summary>
         /// Retrieves all terminal and nonterminal definitions from the specified <see cref="Assembly"/> and adds them to
@@ -76,7 +77,7 @@ namespace Lingua
         /// <param name="name">The name of the grammar being loaded as defined by <see cref="GrammarAttribute"/>.  Specify <value>null</value> to load <paramref name="assembly"/> regardless of grammar name.</param>
         public void LoadRules(Assembly assembly, string name)
         {
-            foreach (Type type in assembly.GetTypes())
+            foreach (var type in assembly.GetTypes())
             {
                 LoadRules(type, name);
             }
@@ -102,81 +103,81 @@ namespace Lingua
             {
                 var parameters = method.GetParameters();
 
-                if (MethodIsRule(method, parameters))
+                if (!MethodIsRule(method, parameters)) continue;
+
+                // Determine priority associated with rule.
+                //
+                var priority = 0;
+                var attributes = method.GetCustomAttributes(typeof(RuleAttribute), false);
+                if (attributes.Length > 0)
                 {
-                    // Determine priority associated with rule.
-                    //
-                    int priority = 0;
-                    object[] attributes = method.GetCustomAttributes(typeof(RuleAttribute), false);
-                    if (attributes.Length > 0)
+                    var attribute = attributes[0] as RuleAttribute;
+                    if (attribute != null)
                     {
-                        var attribute = attributes[0] as RuleAttribute;
-                        if (attribute != null)
-                        {
-                            priority = attribute.Priority;
-                        }
+                        priority = attribute.Priority;
                     }
+                }
 
-                    // Find the grammer language elements associated with each parameter member.
-                    //
-                    NonterminalType lhs = null;
-                    var rhs = new List<LanguageElementType>();
-                    for (var idx = 0; idx < parameters.Length; ++idx)
+                // Find the grammer language elements associated with each parameter member.
+                //
+                NonterminalType lhs = null;
+                var rhs = new List<LanguageElementType>();
+                for (var idx = 0; idx < parameters.Length; ++idx)
+                {
+                    var parameterType = parameters[idx].ParameterType;
+
+                    if (idx == 0)
                     {
-                        Type parameterType = parameters[idx].ParameterType;
-
-                        if (idx == 0)
+                        NonterminalType nonterminal;
+                        if (_nonterminals.TryGetValue(parameterType, out nonterminal))
                         {
-                            NonterminalType nonterminal;
-                            if (_nonterminals.TryGetValue(parameterType, out nonterminal))
-                            {
-                                lhs = nonterminal;
-                            }
-                            else
-                            {
-                                throw new InvalidOperationException();
-                            }
+                            lhs = nonterminal;
                         }
                         else
                         {
-                            NonterminalType nonterminal;
-                            if (_nonterminals.TryGetValue(parameterType, out nonterminal))
+                            throw new InvalidOperationException();
+                        }
+                    }
+                    else
+                    {
+                        NonterminalType nonterminal;
+                        if (_nonterminals.TryGetValue(parameterType, out nonterminal))
+                        {
+                            rhs.Add(nonterminal);
+                        }
+                        else
+                        {
+                            TerminalType terminal;
+                            if (_terminals.TryGetValue(parameterType, out terminal))
                             {
-                                rhs.Add(nonterminal);
+                                rhs.Add(terminal);
                             }
                             else
                             {
-                                TerminalType terminal;
-                                if (_terminals.TryGetValue(parameterType, out terminal))
+                                // If parameterType is currently not defined by the grammar, attempt to process it
+                                // now.  This occurs when OptionalTerminal<> and OptionalNonterminal<> types
+                                // appear in the RHS side of a rule.
+                                //
+                                var languageElementType = Load(parameterType, name);
+                                if (languageElementType != null)
                                 {
-                                    rhs.Add(terminal);
+                                    rhs.Add(languageElementType);
+                                    LoadRules(parameterType, name);
                                 }
                                 else
                                 {
-                                    // If parameterType is currently not defined by the grammar, attempt to process it
-                                    // now.  This occurs when OptionalTerminal<> and OptionalNonterminal<> types
-                                    // appear in the RHS side of a rule.
-                                    //
-                                    LanguageElementType languageElementType = Load(parameterType, name);
-                                    if (languageElementType != null)
-                                    {
-                                        rhs.Add(languageElementType);
-                                        LoadRules(parameterType, name);
-                                    }
-                                    else
-                                    {
-                                        throw new InvalidOperationException("Unrecognized rule argument.");
-                                    }
+                                    throw new InvalidOperationException("Unrecognized rule argument.");
                                 }
                             }
                         }
                     }
-
-                    // Create the rule.
-                    //
-                    var rule = new RuleType(method, priority, lhs, rhs.ToArray());
-                    lhs.Rules.Add(rule);
                 }
+
+                // Create the rule.
+                //
+                if (lhs == null) continue;
+                var rule = new RuleType(method, priority, lhs, rhs.ToArray());
+                lhs.Rules.Add(rule);
             }
         }
 
@@ -210,15 +211,7 @@ namespace Lingua
         /// </summary>
         public TerminalType StopTerminal
         {
-            get
-            {
-                foreach (TerminalType terminal in _terminals.Values)
-                {
-                    if (terminal.IsStop) return terminal;
-                }
-
-                return null;
-            }
+            get { return _terminals.Values.FirstOrDefault(terminal => terminal.IsStop); }
         }
 
         /// <summary>
@@ -228,9 +221,9 @@ namespace Lingua
         {
             get
             {
-                foreach (NonterminalType nonterminal in _nonterminals.Values)
+                foreach (var nonterminal in _nonterminals.Values.Where(nonterminal => nonterminal.IsStart))
                 {
-                    if (nonterminal.IsStart) return nonterminal;
+                    return nonterminal;
                 }
 
                 throw new InvalidOperationException("Starting nonterminal not defined by grammar.");
@@ -259,7 +252,7 @@ namespace Lingua
             return nonterminals;
         }
 
-        private void ComputeFirst()
+        void ComputeFirst()
         {
             // All terminals contains themselves in FIRST.
             //
@@ -277,9 +270,9 @@ namespace Lingua
 
                 // Iterate over all nonterminals and their rules.
                 //
-                foreach (NonterminalType x in _nonterminals.Values)
+                foreach (var x in _nonterminals.Values)
                 {
-                    foreach (RuleType rule in x.Rules)
+                    foreach (var rule in x.Rules)
                     {
                         if (rule.Rhs.Length == 0)
                         {
@@ -297,11 +290,11 @@ namespace Lingua
                             // when e is in FIRST(Yj) for j < i.  Add e to FIRST(X) if e is in 
                             // FIRST(Yi) for all i.
                             //
-                            bool epsilonInAllY = true;
+                            var epsilonInAllY = true;
 
-                            foreach (LanguageElementType y in rule.Rhs)
+                            foreach (var y in rule.Rhs)
                             {
-                                HashSet<TerminalType> yFirst = y.First.GetSetExcludingEpsilon();
+                                var yFirst = y.First.GetSetExcludingEpsilon();
                                 if (yFirst.Count > 0
                                     && !yFirst.IsSubsetOf(x.First))
                                 {
@@ -328,7 +321,7 @@ namespace Lingua
             }
         }
 
-        private void ComputeFollow()
+        void ComputeFollow()
         {
             StartNonterminal.Follow.Add(StopTerminal);
 
@@ -391,7 +384,7 @@ namespace Lingua
             }
         }
 
-        private bool TypeIsTerminal(Type type, string name)
+        bool TypeIsTerminal(Type type, string name)
         {
             if (!type.IsSubclassOf(typeof(Terminal)))
             {
@@ -402,7 +395,7 @@ namespace Lingua
         }
 
 
-        private bool TypeIsNonterminal(Type type, string name)
+        bool TypeIsNonterminal(Type type, string name)
         {
             if (!type.IsSubclassOf(typeof(Nonterminal)))
             {
@@ -412,25 +405,17 @@ namespace Lingua
             return IsGrammarType(type, name);
         }
 
-        private static bool IsGrammarType(Type type, string name)
+        static bool IsGrammarType(Type type, string name)
         {
             if (string.IsNullOrEmpty(name))
             {
                 return true;
             }
 
-            foreach (GrammarAttribute grammarAttribute in type.GetCustomAttributes(typeof(GrammarAttribute), true))
-            {
-                if (grammarAttribute.Name == name)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return type.GetCustomAttributes(typeof (GrammarAttribute), true).Cast<GrammarAttribute>().Any(grammarAttribute => grammarAttribute.Name == name);
         }
 
-        private bool MethodIsRule(MethodInfo method, ParameterInfo[] parameters)
+        bool MethodIsRule(MethodInfo method, ParameterInfo[] parameters)
         {
             // A rule must be static.
             //

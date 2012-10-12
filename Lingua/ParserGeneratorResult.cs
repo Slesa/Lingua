@@ -11,7 +11,7 @@ namespace Lingua
     /// </summary>
     public class ParserGeneratorResult
     {
-        private readonly List<ParserGeneratorParserConflict> _conflicts = new List<ParserGeneratorParserConflict>();
+        readonly List<ParserGeneratorParserConflict> _conflicts = new List<ParserGeneratorParserConflict>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParserGeneratorResult"/> class.

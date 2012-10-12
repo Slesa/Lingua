@@ -15,9 +15,8 @@ namespace Lingua
     {
         delegate void Invoker(LanguageElement[] parameters);
 
-        private readonly Invoker _delegate;
-
-        private readonly NonterminalType _lhs;
+        readonly Invoker _delegate;
+        readonly NonterminalType _lhs;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RuleType"/> class.
@@ -42,7 +41,7 @@ namespace Lingua
 
             FullName = string.Format("{0}::{1}", methodInfo.DeclaringType.FullName, name);
             Name = name;
-            _delegate = delegate(LanguageElement[] parameters) { methodInfo.Invoke(null, parameters); };
+            _delegate = parameters => methodInfo.Invoke(null, parameters);
 
             Priority = priority;
             _lhs = lhs;
@@ -122,7 +121,7 @@ namespace Lingua
         /// </remarks>
         public int CompareTo(RuleType other)
         {
-            return this.Priority.CompareTo(other.Priority);
+            return Priority.CompareTo(other.Priority);
         }
     }
 }

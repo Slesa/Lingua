@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Lingua
@@ -19,13 +20,13 @@ namespace Lingua
     {
         delegate Nonterminal Constructor();
 
-        private readonly string _fullName;
-        private readonly string _name;
-        private readonly Constructor _constructor;
-        private readonly bool _isStart;
+        readonly string _fullName;
+        readonly string _name;
+        readonly Constructor _constructor;
+        readonly bool _isStart;
 
-        private readonly List<RuleType> _rules = new List<RuleType>();
-        private readonly FollowSet _follow = new FollowSet();
+        readonly List<RuleType> _rules = new List<RuleType>();
+        readonly FollowSet _follow = new FollowSet();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NonterminalType"/> class.
@@ -41,16 +42,12 @@ namespace Lingua
 
             _fullName = type.AssemblyQualifiedName;
             _name = GetName(type);
-            _constructor = delegate() { return (Nonterminal)Activator.CreateInstance(type); };
+            _constructor = () => (Nonterminal) Activator.CreateInstance(type);
 
             var attributes = type.GetCustomAttributes(typeof(NonterminalAttribute), false);
-            foreach (var attribute in attributes)
+            foreach (var nonterminalAttribute in attributes.Cast<NonterminalAttribute>().Where(nonterminalAttribute => nonterminalAttribute.IsStart))
             {
-                var nonterminalAttribute = (NonterminalAttribute)attribute;
-                if (nonterminalAttribute.IsStart)
-                {
-                    _isStart = true;
-                }
+                _isStart = true;
             }
         }
 

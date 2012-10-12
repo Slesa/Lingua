@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace Lingua
@@ -14,8 +15,8 @@ namespace Lingua
     /// </summary>
     public class GeneratorState
     {
-        private readonly HashSet<GeneratorStateItem> _items = new HashSet<GeneratorStateItem>();
-        private readonly Dictionary<LanguageElementType, GeneratorState> _transitions = new Dictionary<LanguageElementType, GeneratorState>();
+        readonly HashSet<GeneratorStateItem> _items = new HashSet<GeneratorStateItem>();
+        readonly Dictionary<LanguageElementType, GeneratorState> _transitions = new Dictionary<LanguageElementType, GeneratorState>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GeneratorState"/> class.
@@ -93,16 +94,13 @@ namespace Lingua
         {
             HashSet<GeneratorStateItem> result = null;
 
-            foreach (GeneratorStateItem item in Items)
+            foreach (var item in Items.Where(item => item.RuleItem.DotElement == languageElementType))
             {
-                if (item.RuleItem.DotElement == languageElementType)
+                if (result == null)
                 {
-                    if (result == null)
-                    {
-                        result = new HashSet<GeneratorStateItem>();
-                    }
-                    result.Add(new GeneratorStateItem(new GeneratorRuleItem(item.RuleItem.Rule, item.RuleItem.Dot + 1)));
+                    result = new HashSet<GeneratorStateItem>();
                 }
+                result.Add(new GeneratorStateItem(new GeneratorRuleItem(item.RuleItem.Rule, item.RuleItem.Dot + 1)));
             }
 
             return result;

@@ -15,14 +15,14 @@ namespace Lingua
     /// </summary>
     public class TerminalReader : ITerminalReader
     {
-        private readonly List<TerminalType> _terminalTypes = new List<TerminalType>();
-        private readonly TerminalType _stopTerminal;
-        private readonly Regex _regex;
+        readonly List<TerminalType> _terminalTypes = new List<TerminalType>();
+        readonly TerminalType _stopTerminal;
+        readonly Regex _regex;
 
-        private string _text;
-        private Match _match;
-        private Terminal _queuedTerminal;
-        private bool _stopTerminalRead;
+        string _text;
+        Match _match;
+        Terminal _queuedTerminal;
+        bool _stopTerminalRead;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TerminalReader"/> class.
@@ -77,12 +77,7 @@ namespace Lingua
         /// <returns>The next <see cref="Terminal"/> in the input text.  If no <see cref="TerminalType"/> recognizes the input text, <value>null</value> is returned.</returns>
         public Terminal PeekTerminal()
         {
-            if (_queuedTerminal == null)
-            {
-                _queuedTerminal = GetNextTerminal();
-            }
-
-            return _queuedTerminal;
+            return _queuedTerminal ?? (_queuedTerminal = GetNextTerminal());
         }
 
         /// <summary>
@@ -99,25 +94,23 @@ namespace Lingua
             _queuedTerminal = terminal;
         }
 
-        private string CreatePattern()
+        string CreatePattern()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.Append(@"\G(");
 
             string prefix = null;
             for (int idx = 0; idx < _terminalTypes.Count; ++idx)
             {
-                TerminalType terminal = _terminalTypes[idx];
-                if (!string.IsNullOrEmpty(terminal.Pattern))
-                {
-                    sb.Append(prefix); prefix = "|";
+                var terminal = _terminalTypes[idx];
+                if (string.IsNullOrEmpty(terminal.Pattern)) continue;
 
-                    sb.AppendFormat(
-                        @"(?<t{0}>{1})",
-                        idx,
-                        terminal.Pattern);
-                }
+                sb.Append(prefix); prefix = "|";
+                sb.AppendFormat(
+                    @"(?<t{0}>{1})",
+                    idx,
+                    terminal.Pattern);
             }
 
             sb.Append(")");
@@ -125,29 +118,21 @@ namespace Lingua
             return sb.ToString();
         }
 
-        private Terminal GetNextTerminal()
+        Terminal GetNextTerminal()
         {
-            if (_match == null)
-            {
-                _match = _regex.Match(_text);
-            }
-            else
-            {
-                _match = _match.NextMatch();
-            }
+            _match = _match == null ? _regex.Match(_text) : _match.NextMatch();
 
             if (_match.Success)
             {
-                for (int idx = 0; idx < _terminalTypes.Count; ++idx)
+                for (var idx = 0; idx < _terminalTypes.Count; ++idx)
                 {
-                    Group group = _match.Groups[string.Format("t{0}", idx)];
-                    if (group.Success)
-                    {
-                        Terminal terminal = _terminalTypes[idx].CreateTerminal();
-                        terminal.ElementType = _terminalTypes[idx];
-                        terminal.Text = group.Value;
-                        return terminal;
-                    }
+                    var group = _match.Groups[string.Format("t{0}", idx)];
+                    if (!@group.Success) continue;
+
+                    var terminal = _terminalTypes[idx].CreateTerminal();
+                    terminal.ElementType = _terminalTypes[idx];
+                    terminal.Text = @group.Value;
+                    return terminal;
                 }
             }
 
@@ -155,7 +140,7 @@ namespace Lingua
             {
                 _stopTerminalRead = true;
 
-                Terminal terminal = _stopTerminal.CreateTerminal();
+                var terminal = _stopTerminal.CreateTerminal();
                 terminal.ElementType = _stopTerminal;
                 return terminal;
             }

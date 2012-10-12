@@ -122,12 +122,12 @@ namespace Lingua
         /// </summary>
         /// <param name="lhs">A <see cref="GeneratorRuleItem"/> to compare.</param>
         /// <param name="rhs">A <see cref="GeneratorRuleItem"/> to compare.</param>
-        /// <returns><value>true</value> if the <see cref="Rule"/> and <see cref="Dot"/> values of <paramref name="left"/> and <paramref name="right"/> are equal; otherwise, <value>false</value>.</returns>
+        /// <returns><value>true</value> if the <see cref="Rule"/> and <see cref="Dot"/> values of <paramref name="lhs"/> and <paramref name="rhs"/> are equal; otherwise, <value>false</value>.</returns>
         public static bool operator ==(GeneratorRuleItem lhs, GeneratorRuleItem rhs)
         {
-            if (object.ReferenceEquals(lhs, rhs)) return true;
+            if (ReferenceEquals(lhs, rhs)) return true;
 
-            if (object.ReferenceEquals(lhs, null) || object.ReferenceEquals(rhs, null)) return false;
+            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null)) return false;
 
             return (lhs.Rule == rhs.Rule)
                    && (lhs.Dot == rhs.Dot);
@@ -138,7 +138,7 @@ namespace Lingua
         /// </summary>
         /// <param name="lhs">A <see cref="GeneratorRuleItem"/> to compare.</param>
         /// <param name="rhs">A <see cref="GeneratorRuleItem"/> to compare.</param>
-        /// <returns><value>true</value> if the <see cref="Rule"/> and <see cref="Dot"/> values of <paramref name="left"/> and <paramref name="right"/> differ; otherwise, <value>false</value>.</returns>
+        /// <returns><value>true</value> if the <see cref="Rule"/> and <see cref="Dot"/> values of <paramref name="lhs"/> and <paramref name="rhs"/> differ; otherwise, <value>false</value>.</returns>
         public static bool operator !=(GeneratorRuleItem lhs, GeneratorRuleItem rhs)
         {
             return !(lhs == rhs);
@@ -151,7 +151,7 @@ namespace Lingua
         /// <returns><value>true</value> if the value of <paramref name="other"/> is the same as this instance; otherwise, <value>false</value>.</returns>
         public bool Equals(GeneratorRuleItem other)
         {
-            if (object.ReferenceEquals(other, null)) return false;
+            if (ReferenceEquals(other, null)) return false;
 
             return (Rule == other.Rule)
                    && (Dot == other.Dot);

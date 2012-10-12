@@ -17,8 +17,8 @@ namespace Lingua
     /// </remarks>
     public abstract class LanguageElementType
     {
-        private readonly LanguageElementTypes _elementType;
-        private readonly FirstSet _first = new FirstSet();
+        readonly LanguageElementTypes _elementType;
+        readonly FirstSet _first = new FirstSet();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LanguageElementType"/> class.

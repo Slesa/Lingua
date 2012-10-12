@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Lingua
 {
@@ -29,11 +30,7 @@ namespace Lingua
 
             // Create a parser state for each generator state.
             //
-            var parserStates = new Dictionary<GeneratorState, ParserState>();
-            foreach (var state in states)
-            {
-                parserStates.Add(state, new ParserState(state.Id));
-            }
+            var parserStates = states.ToDictionary(state => state, state => new ParserState(state.Id));
 
             foreach (var state in states)
             {
@@ -46,19 +43,19 @@ namespace Lingua
                 //
                 var actions = new Dictionary<TerminalType, ParserAction>();
                 var actionRules = new Dictionary<ParserAction, GeneratorRuleItem>();
-                foreach (GeneratorStateItem item in items)
+                foreach (var item in items)
                 {
                     LinguaTrace.TraceEvent(TraceEventType.Verbose, LinguaTraceId.ID_GENERATE_PROCESS_ITEM, "{0}", item);
 
                     if (item.RuleItem.DotElement == null)
                     {
-                        foreach (TerminalType terminal in item.RuleItem.Rule.Lhs.Follow)
+                        foreach (var terminal in item.RuleItem.Rule.Lhs.Follow)
                         {
                             LinguaTrace.TraceEvent(TraceEventType.Verbose, LinguaTraceId.ID_GENERATE_PROCESS_TERMINAL, "{0}", terminal);
 
                             if (actions.ContainsKey(terminal))
                             {
-                                ParserGeneratorParserConflict conflict = new ParserGeneratorParserConflict(
+                                var conflict = new ParserGeneratorParserConflict(
                                     actionRules[actions[terminal]].ToString(),
                                     item.RuleItem.ToString());
 
@@ -66,8 +63,7 @@ namespace Lingua
 
                                 conflicts.Add(conflict);
                             }
-                            else if (item.RuleItem.Rule.Lhs.IsStart 
-                                     && terminal.IsStop)
+                            else if (item.RuleItem.Rule.Lhs.IsStart && terminal.IsStop)
                             {
                                 ParserAction action = new ParserActionAccept(item.RuleItem.Rule);
 
@@ -89,11 +85,11 @@ namespace Lingua
                     }
                     else if (item.RuleItem.DotElement.ElementType == LanguageElementTypes.Terminal)
                     {
-                        TerminalType terminal = (TerminalType)item.RuleItem.DotElement;
+                        var terminal = (TerminalType)item.RuleItem.DotElement;
 
                         if (actions.ContainsKey(terminal))
                         {
-                            ParserGeneratorParserConflict conflict = new ParserGeneratorParserConflict(
+                            var conflict = new ParserGeneratorParserConflict(
                                 actionRules[actions[terminal]].ToString(),
                                 item.RuleItem.ToString());
 
@@ -118,11 +114,10 @@ namespace Lingua
                 var gotos = new Dictionary<NonterminalType, ParserState>();
                 foreach (var transition in state.Transitions)
                 {
-                    if (transition.Key.ElementType == LanguageElementTypes.Nonterminal)
-                    {
-                        var nonterminal = (NonterminalType)transition.Key;
-                        gotos.Add(nonterminal, parserStates[transition.Value]);
-                    }
+                    if (transition.Key.ElementType != LanguageElementTypes.Nonterminal) continue;
+
+                    var nonterminal = (NonterminalType)transition.Key;
+                    gotos.Add(nonterminal, parserStates[transition.Value]);
                 }
 
                 // Update the parser state.
@@ -139,13 +134,13 @@ namespace Lingua
                 }
             }
 
-            Parser parser = new Parser(parserStates[states[0]]);
+            var parser = new Parser(parserStates[states[0]]);
 
             var result = new ParserGeneratorResult(parser, conflicts);
             return result;
         }
 
-        private List<GeneratorState> CreateStates(IGrammar grammar)
+        List<GeneratorState> CreateStates(IGrammar grammar)
         {
             var states = new List<GeneratorState>();
             var unevaluatedStates = new List<GeneratorState>();
@@ -180,34 +175,25 @@ namespace Lingua
                 foreach (var languageElement in languageElements)
                 {
                     var items = state.Apply(languageElement);
-                    if (items != null)
+                    if (items == null) continue;
+
+                    ComputeClosure(grammar, items);
+
+                    var toState = states.FirstOrDefault(existingState => existingState.Items.SetEquals(items));
+                    if (toState == null)
                     {
-                        ComputeClosure(grammar, items);
-
-                        GeneratorState toState = null;
-                        foreach (GeneratorState existingState in states)
-                        {
-                            if (existingState.Items.SetEquals(items))
-                            {
-                                toState = existingState;
-                                break;
-                            }
-                        }
-                        if (toState == null)
-                        {
-                            toState = new GeneratorState(stateId++, items);
-                            states.Add(toState);
-                            unevaluatedStates.Add(toState);
-                        }
-
-                        state.Transitions.Add(languageElement, toState);
+                        toState = new GeneratorState(stateId++, items);
+                        states.Add(toState);
+                        unevaluatedStates.Add(toState);
                     }
+
+                    state.Transitions.Add(languageElement, toState);
                 }
             }
 
             if (LinguaTrace.TraceSource.Switch.ShouldTrace(TraceEventType.Information))
             {
-                foreach (GeneratorState state in states)
+                foreach (var state in states)
                 {
                     LinguaTrace.TraceEvent(TraceEventType.Information, LinguaTraceId.ID_GENERATE_STATE, "{0}", state);
                 }
@@ -216,7 +202,7 @@ namespace Lingua
             return states;
         }
 
-        private void ComputeClosure(IGrammar grammar, HashSet<GeneratorStateItem> items)
+        void ComputeClosure(IGrammar grammar, HashSet<GeneratorStateItem> items)
         {
             // Continue to loop until new more elements are added to the state.
             //
@@ -231,16 +217,14 @@ namespace Lingua
                 foreach (var item in items)
                 {
                     var languageElement = item.RuleItem.DotElement;
-                    if (languageElement != null
-                         && languageElement.ElementType == LanguageElementTypes.Nonterminal)
+                    if (languageElement == null || languageElement.ElementType != LanguageElementTypes.Nonterminal)
+                        continue;
+                    
+                    var nonterminal = (NonterminalType)languageElement;
+                    foreach (var rule in nonterminal.Rules)
                     {
-                        var nonterminal = (NonterminalType)languageElement;
-
-                        foreach (var rule in nonterminal.Rules)
-                        {
-                            var newItem = new GeneratorStateItem(new GeneratorRuleItem(rule, 0));
-                            newItems.Add(newItem);
-                        }
+                        var newItem = new GeneratorStateItem(new GeneratorRuleItem(rule, 0));
+                        newItems.Add(newItem);
                     }
                 }
 

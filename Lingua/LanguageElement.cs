@@ -16,7 +16,7 @@ namespace Lingua
         /// <summary>
         /// Initializes a new instance of the <see cref="LanguageElement"/> class.
         /// </summary>
-        public LanguageElement()
+        protected LanguageElement()
         { }
 
         /// <summary>

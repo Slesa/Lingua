@@ -12,15 +12,13 @@ namespace Lingua
     /// </summary>
     public class Parser : IParser
     {
-        private ParserState m_initialState;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Parser"/> class.
         /// </summary>
         /// <param name="initialState">The initial <see cref="ParserState"/>.</param>
         public Parser(ParserState initialState)
         {
-            m_initialState = initialState;
+            InitialState = initialState;
         }
 
         /// <summary>
@@ -42,7 +40,7 @@ namespace Lingua
                 }
                 else
                 {
-                    ParserAction action = stack.Peek().State.GetAction(terminal.ElementType);
+                    var action = stack.Peek().State.GetAction(terminal.ElementType);
 
                     LinguaTrace.TraceEvent(TraceEventType.Information, LinguaTraceId.ID_PARSE_ACTION, "{0}", action);
 
@@ -58,16 +56,13 @@ namespace Lingua
                                 var reduce = (ParserActionAccept)action;
                                 var rule = reduce.Rule;
                                 var lhs = Reduce(stack, rule);
-
                                 return lhs;
                             }
 
                         case ParserActionTypes.Shift:
                             {
                                 var shift = (ParserActionShift)action;
-
                                 stack.Push(terminal, shift.State);
-
                                 terminal = terminalReader.ReadTerminal();
                             }
                             break;
@@ -76,7 +71,6 @@ namespace Lingua
                             {
                                 var reduce = (ParserActionReduce)action;
                                 var rule = reduce.Rule;
-
                                 var lhs = Reduce(stack, rule);
 
                                 // Push the LHS nonterminal on the stack.
@@ -89,27 +83,26 @@ namespace Lingua
                             throw new InvalidOperationException(string.Format("Unrecognized action type {0}.", action.ActionType));
                     }
                 }
-            };
-
+            }
             return null;
         }
 
-        private static Nonterminal Reduce(ParserStack stack, RuleType rule)
+        static Nonterminal Reduce(ParserStack stack, RuleType rule)
         {
             // Create a language element array big enough to hold the LHS and RHS
             // arguments.
             //
-            int parameterCount = 1 + rule.Rhs.Length;
-            LanguageElement[] parameters = new LanguageElement[parameterCount];
+            var parameterCount = 1 + rule.Rhs.Length;
+            var parameters = new LanguageElement[parameterCount];
 
             // Create the LHS nonterminal.
             //
-            Nonterminal lhs = rule.Lhs.CreateNonterminal();
+            var lhs = rule.Lhs.CreateNonterminal();
             parameters[0] = lhs;
 
             // Pop the RHS language elements off the stack.
             //
-            for (int idx = 0; idx < rule.Rhs.Length; ++idx)
+            for (var idx = 0; idx < rule.Rhs.Length; ++idx)
             {
                 parameters[parameterCount - idx - 1] = stack.Pop().LanguageElement;
             }
@@ -120,9 +113,6 @@ namespace Lingua
             return lhs;
         }
 
-        private ParserState InitialState
-        {
-            get { return m_initialState; }
-        }
+        ParserState InitialState { get; set; }
     }
 }

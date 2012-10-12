@@ -16,8 +16,8 @@ namespace Lingua
     /// </remarks>
     public class ParserState
     {
-        private readonly Dictionary<TerminalType, ParserAction> _actions = new Dictionary<TerminalType, ParserAction>();
-        private readonly Dictionary<NonterminalType, ParserState> _gotos = new Dictionary<NonterminalType, ParserState>();
+        readonly Dictionary<TerminalType, ParserAction> _actions = new Dictionary<TerminalType, ParserAction>();
+        readonly Dictionary<NonterminalType, ParserState> _gotos = new Dictionary<NonterminalType, ParserState>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParserState"/> class.
@@ -63,11 +63,7 @@ namespace Lingua
         public ParserAction GetAction(TerminalType terminalType)
         {
             ParserAction action;
-            if (_actions.TryGetValue(terminalType, out action))
-            {
-                return action;
-            }
-            return null;
+            return _actions.TryGetValue(terminalType, out action) ? action : null;
         }
 
         /// <summary>
@@ -79,11 +75,7 @@ namespace Lingua
         public ParserState GetGoto(NonterminalType nonterminalType)
         {
             ParserState state;
-            if (_gotos.TryGetValue(nonterminalType, out state))
-            {
-                return state;
-            }
-            return null;
+            return _gotos.TryGetValue(nonterminalType, out state) ? state : null;
         }
     }
 }

@@ -19,13 +19,13 @@ namespace Lingua
 
     public static class LinguaTrace
     {
-        private static TraceSource s_traceSource = new TraceSource("Lingua", SourceLevels.All);
+        static readonly TraceSource _traceSource = new TraceSource("Lingua", SourceLevels.All);
 
         public static TraceSource TraceSource
         {
             get
             {
-                return s_traceSource;
+                return _traceSource;
             }
         }
 

@@ -36,6 +36,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\VersionInfo.cs">
+      <Link>VersionInfo.cs</Link>
+    </Compile>
     <Compile Include="FirstSet.cs" />
     <Compile Include="FollowSet.cs" />
     <Compile Include="GeneratorRuleItem.cs" />

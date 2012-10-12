@@ -3,6 +3,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Lingua
@@ -18,13 +19,9 @@ namespace Lingua
     {
         delegate Terminal Constructor();
 
-        private readonly string _fullName;
-        private readonly string _name;
-        private readonly Constructor _constructor;
-        private readonly string _pattern;
-        private readonly bool _isStop;
-        private readonly bool _ignore;
-
+        readonly string _fullName;
+        readonly string _name;
+        readonly Constructor _constructor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TerminalType"/> class.
@@ -40,21 +37,20 @@ namespace Lingua
 
             _fullName = type.AssemblyQualifiedName;
             _name = GetName(type);
-            _constructor = delegate() { return (Terminal)Activator.CreateInstance(type); };
+            _constructor = () => (Terminal) Activator.CreateInstance(type);
 
             var attributes = type.GetCustomAttributes(typeof(TerminalAttribute), false);
-            foreach (var attribute in attributes)
+            foreach (var terminalAttribute in attributes.Cast<TerminalAttribute>())
             {
-                var terminalAttribute = (TerminalAttribute)attribute;
                 if (terminalAttribute.IsStop)
                 {
-                    _isStop = true;
+                    IsStop = true;
                 }
                 if (terminalAttribute.Ignore)
                 {
-                    _ignore = true;
+                    Ignore = true;
                 }
-                _pattern = terminalAttribute.Pattern;
+                Pattern = terminalAttribute.Pattern;
             }
         }
 
@@ -79,28 +75,19 @@ namespace Lingua
         /// <summary>
         /// Gets or sets the regular expression pattern of this <see cref="TerminalType"/>.
         /// </summary>
-        public string Pattern
-        {
-            get { return _pattern; }
-        }
+        public string Pattern { get; private set; }
 
         /// <summary>
         /// Gets or sets a value that indicates if this <see cref="TerminalType"/> is the stopping terminal
         /// of the <see cref="IGrammar"/>.
         /// </summary>
-        public bool IsStop
-        {
-            get { return _isStop; }
-        }
+        public bool IsStop { get; private set; }
 
         /// <summary>
         /// Gets or sets a value that indicates if <see cref="Terminal"/> objects associated with this <see cref="TerminalType"/> should be ignored by any
         /// <see cref="IParser"/> that encounters them.
         /// </summary>
-        public bool Ignore
-        {
-            get { return _ignore; }
-        }
+        public bool Ignore { get; private set; }
 
 
         public override string ToString()
