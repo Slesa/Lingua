@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -10,10 +8,6 @@ using System.Windows;
 [assembly: AssemblyTitle("Lingua.NET Demo")]
 [assembly: AssemblyDescription(".NET-based Parser Generator Demo")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Richard G. Todd")]
-[assembly: AssemblyProduct("Lingua.NET")]
-[assembly: AssemblyCopyright("Copyright © 2009")]
-[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

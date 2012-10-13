@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Lingua.dll</id>
+    <version>1.0.0</version>
+    <authors>R. Todd, J. Preiss</authors>
+    <owners>J. Preiss</owners>
+    <licenseUrl>http://github.com/Slesa/Lingua/blob/master/Copyright.txt</licenseUrl>
+    <projectUrl>http://github.com/Slesa/Lingua</projectUrl>
+    <!-- iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A .NET-based parser generator.  It uses reflection to generate parsers and scanners using code-based scanner and grammar definitions.</description>
+    <releaseNotes>Released on github with .NET 4</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <tags>Parser Generator Grammar</tags>
+    <!-- dependencies>
+      <dependency id="SampleDependency" version="1.0" />
+    </dependencies-->
+	<references>
+		<reference file="Lingua.dll" />
+	</references>
+  </metadata>
+</package>
