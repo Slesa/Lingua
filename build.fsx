@@ -10,7 +10,7 @@ let authors = ["R. Todd"; "J. Preiss"]
 
 let currentVersion =
   if not isLocalBuild then buildVersion else
-  "0.9.9.1"
+  "1.0.0.1"
 
 TraceEnvironmentVariables()
 
@@ -84,12 +84,13 @@ Target "RunTest" (fun _ ->
 
 Target "Deploy" (fun _ ->
   
-  let libDir = deployDir @@ @"lib\"
+  let libDir = deployDir @@ @"lib\net40"
   CreateDir libDir
   let toolsDir = deployDir @@ @"tools\"
   CreateDir toolsDir
   let contentDir = deployDir @@ @"content\"
   CreateDir contentDir
+  let nugetExe = @"tools\NuGet\NuGet.exe"
 
   !! "Lingua.nuspec"
     |> CopyTo deployDir
@@ -100,11 +101,15 @@ Target "Deploy" (fun _ ->
     ++ (buildDir @@ "LinguaDemo.exe.config")
     |> Scan
       |> CopyTo toolsDir
-//  let deployMsi = deployDir @@ sprintf "%s-%s.msi" projectName currentVersion
-//  !! (setupDir @@ "*.wxl")
-//    |> WiX (fun p -> WiXDefaults) deployMsi 
-//  MSBuildReleaseExt deployDir ["Version", currentVersion] "Build" deployReferences
-//    |> Log "DeployBuildOutput: "
+
+  let result = 
+    ExecProcess (fun info -> 
+      info.FileName <- nugetExe
+      info.Arguments <- "pack " + projectName + ".nuspec"
+      info.WorkingDirectory <- deployDir
+    ) (System.TimeSpan.FromMinutes 1.)
+  if result <> 0 then failwith "Unable to call nuget"
+
 )
 
 Target "Default" DoNothing
