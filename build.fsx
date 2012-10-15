@@ -7,6 +7,8 @@ open Fake
 let projectName = "Lingua"
 let projectSummary = "A .NET-based parser generator.  It uses reflection to generate parsers and scanners using code-based scanner and grammar definitions."
 let authors = ["R. Todd"; "J. Preiss"]
+let homepage = "https://github.com/Slesa/Lingua"
+let mail = "joerg.preiss@slesa.de"
 
 let currentVersion =
   if not isLocalBuild then buildVersion else
@@ -16,13 +18,18 @@ TraceEnvironmentVariables()
 
 
 // Directories
+let srcDir = @".\src\"
 let binDir = @".\bin\"
 let buildDir = binDir @@ @"build\"
 let testDir = binDir @@ @"test\"
+let nugetDir = binDir @@ @"nuget\"
 let reportDir = binDir @@ @"report\"
-let deployDir = binDir @@ @"deploy\"
-let packagesDir = binDir @@ @"packages"
-let mspecDir = packagesDir @@ "MSpec"
+let packagesDir = srcDir @@ @"packages\"
+
+
+// Tools
+let MSpecVersion = GetPackageVersion packagesDir "Machine.Specifications"
+let mspecTool = sprintf @"%sMachine.Specifications.%s\tools\mspec-clr4.exe" packagesDir MSpecVersion 
 
 
 // Files
@@ -38,11 +45,7 @@ let testReferences =
 
 // Targets
 Target "Clean" (fun _ ->
-  CleanDirs [buildDir; testDir; deployDir; reportDir; packagesDir]
-
-  CreateDir mspecDir
-  !! (@"src\packages\Machine.Specifications.*\**\*.*")
-    |> CopyTo mspecDir
+  CleanDirs [buildDir; testDir; nugetDir; reportDir ]
 )
 
 Target "SetAssemblyInfo" (fun _ ->
@@ -58,7 +61,7 @@ Target "SetAssemblyInfo" (fun _ ->
       AssemblyCopyright = "Copyright Â©  2010";
       AssemblyTrademark = "MS Public License";
       AssemblyVersion = currentVersion;
-      OutputFileName = @".\src\VersionInfo.cs"})
+      OutputFileName = srcDir @@ @"\VersionInfo.cs"})
 )
 
 Target "BuildApp" (fun _ ->
@@ -68,13 +71,10 @@ Target "BuildApp" (fun _ ->
 
 Target "BuildTest" (fun _ ->
   MSBuildDebug testDir "Build" testReferences
-    |> Log "TestBuildOutput: "
+    |> Log "TestBuild-Output: "
 )
 
 Target "RunTest" (fun _ ->
-  let mspecTool = mspecDir @@ "mspec-clr4.exe"
-  trace mspecTool
-
   !! (testDir @@ "*.Specs.dll")
     |> MSpec (fun p ->
       {p with
@@ -84,32 +84,35 @@ Target "RunTest" (fun _ ->
 
 Target "Deploy" (fun _ ->
   
-  let libDir = deployDir @@ @"lib\net40"
+  let libDir = nugetDir @@ @"lib\net40"
   CreateDir libDir
-  let toolsDir = deployDir @@ @"tools\"
+  let toolsDir = nugetDir @@ @"tools\"
   CreateDir toolsDir
-  let contentDir = deployDir @@ @"content\"
+  let contentDir = nugetDir @@ @"content\"
   CreateDir contentDir
   let nugetExe = @"tools\NuGet\NuGet.exe"
 
-  !! "Lingua.nuspec"
-    |> CopyTo deployDir
   !! (buildDir @@ "Lingua.dll")
     |> CopyTo libDir
   !+ (buildDir @@ "Lingua.dll")
     ++ (buildDir @@ "LinguaDemo.exe")
     ++ (buildDir @@ "LinguaDemo.exe.config")
+      |> Scan
+        |> CopyTo toolsDir
+  !+ "Copyright.txt"
+    ++ "License.txt"
+    ++ "Readme.txt"
     |> Scan
-      |> CopyTo toolsDir
+      |> CopyTo contentDir
 
-  let result = 
-    ExecProcess (fun info -> 
-      info.FileName <- nugetExe
-      info.Arguments <- "pack " + projectName + ".nuspec"
-      info.WorkingDirectory <- deployDir
-    ) (System.TimeSpan.FromMinutes 1.)
-  if result <> 0 then failwith "Unable to call nuget"
-
+  NuGet (fun p -> 
+    {p with               
+      Authors = authors
+      Project = projectName
+      Description = projectSummary                               
+      OutputPath = nugetDir
+      AccessKey = getBuildParamOrDefault "nugetkey" ""
+      Publish = hasBuildParam "nugetkey" }) "Lingua.nuspec"
 )
 
 Target "Default" DoNothing

@@ -17,8 +17,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("Lingua")]
 [assembly: AssemblyCopyright("Copyright Â©  2010")]
 [assembly: AssemblyTrademark("MS Public License")]
-[assembly: AssemblyVersion("0.9.9.1")]
-[assembly: AssemblyFileVersion("0.9.9.1")]
+[assembly: AssemblyVersion("1.0.0.1")]
+[assembly: AssemblyFileVersion("1.0.0.1")]
 [assembly: AssemblyDelaySign(false)]
 
 
