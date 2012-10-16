@@ -34,8 +34,8 @@ let mspecTool = sprintf @"%sMachine.Specifications.%s\tools\mspec-clr4.exe" pack
 
 // Files
 let appReferences  = 
-  !+ @"**\Lingua\Lingua.csproj" 
-    ++ @"**\LinguaDemo\LinguaDemo.csproj"
+  !+ @"src\Lingua\Lingua.csproj" 
+    ++ @"src\LinguaDemo\LinguaDemo.csproj"
         |> Scan
 
 let testReferences = 
