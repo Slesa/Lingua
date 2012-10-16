@@ -111,7 +111,7 @@ Target "Deploy" (fun _ ->
       Project = projectName
       Description = projectSummary                               
       OutputPath = nugetDir
-	  Version = currentVersion
+      Version = currentVersion
       AccessKey = getBuildParamOrDefault "nugetkey" ""
       Publish = hasBuildParam "nugetkey" }) "Lingua.nuspec"
 )
