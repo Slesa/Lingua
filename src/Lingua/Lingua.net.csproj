@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4B8AD6FC-73F6-4FE9-9C62-DD4720081C65}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lingua</RootNamespace>
+    <AssemblyName>Lingua</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\VersionInfo.cs">
+      <Link>VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="FirstSet.cs" />
+    <Compile Include="FollowSet.cs" />
+    <Compile Include="GeneratorRuleItem.cs" />
+    <Compile Include="GeneratorState.cs" />
+    <Compile Include="GeneratorStateItem.cs" />
+    <Compile Include="Grammar.cs" />
+    <Compile Include="GrammarAttribute.cs" />
+    <Compile Include="IGrammar.cs" />
+    <Compile Include="IParser.cs" />
+    <Compile Include="IParserGenerator.cs" />
+    <Compile Include="ITerminalReader.cs" />
+    <Compile Include="ITerminalReaderGenerator.cs" />
+    <Compile Include="LanguageElement.cs" />
+    <Compile Include="LanguageElementType.cs" />
+    <Compile Include="LanguageElementTypes.cs" />
+    <Compile Include="LinguaTrace.cs" />
+    <Compile Include="Nonterminal.cs" />
+    <Compile Include="NonterminalAttribute.cs" />
+    <Compile Include="NonterminalType.cs" />
+    <Compile Include="OptionalNonterminal.cs" />
+    <Compile Include="OptionalTerminal.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="ParserAction.cs" />
+    <Compile Include="ParserActionAccept.cs" />
+    <Compile Include="ParserActionReduce.cs" />
+    <Compile Include="ParserActionShift.cs" />
+    <Compile Include="ParserActionTypes.cs" />
+    <Compile Include="ParserGenerator.cs" />
+    <Compile Include="ParserGeneratorParserConflict.cs" />
+    <Compile Include="ParserGeneratorResult.cs" />
+    <Compile Include="ParserStack.cs" />
+    <Compile Include="ParserStackItem.cs" />
+    <Compile Include="ParserState.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RuleAttribute.cs" />
+    <Compile Include="RuleType.cs" />
+    <Compile Include="Terminal.cs" />
+    <Compile Include="TerminalAttribute.cs" />
+    <Compile Include="TerminalReader.cs" />
+    <Compile Include="TerminalReaderGenerator.cs" />
+    <Compile Include="TerminalReaderGeneratorResult.cs" />
+    <Compile Include="TerminalStop.cs" />
+    <Compile Include="TerminalType.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

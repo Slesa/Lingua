@@ -1,0 +1,52 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Lingua.Demo.ViewModels;assembly=Lingua.Demo"
+        Icon="resm:Lingua.Demo.Assets.avalonia-logo.ico"
+        Title="Lingua.Demo">
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    <Menu Name="mnuMain"
+          Grid.Row="0">
+      <MenuItem Name="mnuFile" Header="_File">
+        <MenuItem Name="mnuFileExit" Header="E_xit" Command="{Binding OnFileExit}" />
+      </MenuItem>
+    </Menu>
+    <TabControl Grid.Row="1">
+      <TabItem Header="Main">
+        <StackPanel>
+          <TextBlock>Expression:</TextBlock>
+          <TextBox Name="txtExpression" />
+          <TextBlock>Result:</TextBlock>
+          <TextBox IsReadOnly="True" Name="txtResult" />
+          <Button Name="btnEvaluate" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Command="{Binding OnEvaluate}" Margin="0,3" IsDefault="True">_Evaluate</Button>
+        </StackPanel>
+      </TabItem>
+      <TabItem Header="Trace">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <!-- VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  
+          VerticalContentAlignment="Stretch"
+          -->
+          <TextBox Name="txtTrace"
+                   Grid.Row="0"
+                   TextWrapping="Wrap" AcceptsReturn="True"  />
+          <Button  Name="btnClear"
+                   Grid.Row="1"
+                   HorizontalAlignment="Left" Margin="0,3" Command="{Binding OnClear}">Clear</Button>
+        </Grid>
+      </TabItem>
+    </TabControl>
+  </Grid>
+
+</Window>
