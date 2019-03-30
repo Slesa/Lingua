@@ -12,7 +12,7 @@ let mail = "joerg.preiss@slesa.de"
 
 let currentVersion =
   if not isLocalBuild then buildVersion else
-  "1.0.0.1"
+  "1.0.2"
 
 TraceEnvironmentVariables()
 
@@ -34,8 +34,8 @@ let mspecTool = sprintf @"%sMachine.Specifications.%s\tools\mspec-clr4.exe" pack
 
 // Files
 let appReferences  = 
-  !+ @"**\Lingua\Lingua.csproj" 
-    ++ @"**\LinguaDemo\LinguaDemo.csproj"
+  !+ @"src\Lingua\Lingua.csproj" 
+    ++ @"src\LinguaDemo\LinguaDemo.csproj"
         |> Scan
 
 let testReferences = 
@@ -58,7 +58,7 @@ Target "SetAssemblyInfo" (fun _ ->
       CLSCompliant = None;
       AssemblyCompany = "Richard G. Todd";
       AssemblyProduct = "Lingua";
-      AssemblyCopyright = "Copyright Â©  2010";
+      AssemblyCopyright = "Copyright ©  2010";
       AssemblyTrademark = "MS Public License";
       AssemblyVersion = currentVersion;
       OutputFileName = srcDir @@ @"\VersionInfo.cs"})
@@ -111,6 +111,7 @@ Target "Deploy" (fun _ ->
       Project = projectName
       Description = projectSummary                               
       OutputPath = nugetDir
+      Version = currentVersion
       AccessKey = getBuildParamOrDefault "nugetkey" ""
       Publish = hasBuildParam "nugetkey" }) "Lingua.nuspec"
 )
