@@ -21,6 +21,8 @@ Invoke-Expression "dotnet --info"
 
 # Build
 
+Write-Host "Change to src..."
+cd src
 Write-Host "Restoring packages..."
 Invoke-ExpressionExitCodeCheck "dotnet restore" -ErrorAction Stop
 

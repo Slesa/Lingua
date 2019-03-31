@@ -27,7 +27,7 @@ function error {
 
 function restore {
     info "Restoring packages..."
-    if dotnet restore ; then
+    if dotnet restore $1/*.csproj ; then
         success "Restore succeeded" 
     else
         error "Restore failed"
@@ -62,8 +62,6 @@ if [ -d $artifactsFolder ]; then
   rm -R $artifactsFolder
 fi
 
-restore
-
 # Folders array
 folders=( ) 
 
@@ -76,6 +74,7 @@ done
 # Build all projects 
 for _d in "${folders[@]}"
 do
+    restore $_d
     buildProject $_d
 done
 
