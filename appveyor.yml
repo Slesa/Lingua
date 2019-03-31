@@ -1,0 +1,43 @@
+environment:
+  nuget_version: '1.1.0'
+  nuget_prerelease: false
+  assembly_version: '1.1.0.0'
+
+image: Visual Studio 2017
+
+deploy:
+  - provider: GitHub
+    description: |
+      * Track behavior field from context in behavior specification
+
+    on:
+      appveyor_repo_tag: true
+    prerelease: $(nuget_prerelease)
+
+    #release: v$(nuget_version)
+    #auth_token:
+    #  secure: VrF5TrpBRN0ims9nJC1LG32O6ga5hsRuGNSufEbatAiIWZ1z68iiCYKZtqnAaT9y
+
+  - provider: NuGet
+    api_key:
+      secure: oy2lb3fjjur4feps73dqllx3uaj6chiu5ct4zqwgg2az7q
+    on:
+      appveyor_repo_tag: true
+
+pull_requests:
+  do_not_increment_build_number: true
+
+clone_depth: 5
+
+version: '$(nuget_version)+{build}'
+configuration: Release
+
+build_script:
+- cmd: >-
+    powershell -f build.ps1 -PackageOutputDirectory "..\..\Build" -Package "src\Lingua" -Version "%NUGET_VERSION%" -Configuration "%CONFIGURATION%"
+
+artifacts:
+- path: Build\*.nupkg
+
+test: off
+
