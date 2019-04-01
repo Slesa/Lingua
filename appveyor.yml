@@ -34,7 +34,7 @@ configuration: Release
 
 build_script:
 - cmd: >-
-    powershell -f build.ps1 -PackageOutputDirectory "..\..\Build" -Package "src\Lingua" -Version "%NUGET_VERSION%" -Configuration "%CONFIGURATION%"
+    powershell -f build.ps1 -PackageOutputDirectory "..\..\Build" -Package "Lingua" -Version "%NUGET_VERSION%" -Configuration "%CONFIGURATION%"
 
 artifacts:
 - path: Build\*.nupkg
