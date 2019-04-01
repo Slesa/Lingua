@@ -127,6 +127,23 @@ Task("CreatePackages")
     DotNetCorePack(linguaProject, settings);
 });
 
+Task("PublishPackages")
+  .Does( () => {
+    var packages = GetFiles(deployDir+"/*.nupkg");
+    NuGetPush(packages, new NuGetPushSettings {
+        Source = "https://nuget.org",
+        ApiKey = "oy2lb3fjjur4feps73dqllx3uaj6chiu5ct4zqwgg2az7q"
+    });
+    /* var settings = new DotNetCorePublishSettings
+    {
+        ArgumentCustomization = args => CreateNugetArguments(args),
+        Configuration = configuration,
+        OutputDirectory = deployDir,
+        NoRestore = true,
+        NoBuild = true,
+    };
+    DotNetCorePublish(linguaProject, settings); */
+});
 
 //////////////////////////////////////////////////////////////////////
 // TARGETS
@@ -139,8 +156,7 @@ Task("Default")
   .IsDependentOn("Build")
   .IsDependentOn("CreatePackages");
 
-//Task("Deploy")
-//  .IsDependentOn("PublishPackages")
-//  .IsDependentOn("DeployTools");
+Task("Deploy")
+  .IsDependentOn("PublishPackages");
 
 RunTarget(target); 

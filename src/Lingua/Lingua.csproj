@@ -5,7 +5,7 @@
     <Authors>"R. Todd"; "J. Preiss"</Authors>
     <TargetFrameworks>net40;net45;netcoreapp2.2</TargetFrameworks>
     <AssemblyName>Lingua</AssemblyName>
-    <PackageId>Lingua</PackageId>
+    <PackageId>Lingua.dll</PackageId>
     <PackageTags>Parser Generator Grammar Prolog</PackageTags>
     <PackageReleaseNotes>My Release Notes</PackageReleaseNotes>
     <!-- PackageIconUrl>http://github.com/machine/machine.specifications/raw/master/Misc/Machine.Specifications-128x128.png</PackageIconUrl -->
