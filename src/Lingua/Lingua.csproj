@@ -7,10 +7,11 @@
     <AssemblyName>Lingua</AssemblyName>
     <PackageId>Lingua</PackageId>
     <PackageTags>Parser Generator Grammar Prolog</PackageTags>
-    <PackageReleaseNotes>https://github.com/Slesa/Lingua/ReleaseNotes.md</PackageReleaseNotes>
+    <PackageReleaseNotes>My Release Notes</PackageReleaseNotes>
     <!-- PackageIconUrl>http://github.com/machine/machine.specifications/raw/master/Misc/Machine.Specifications-128x128.png</PackageIconUrl -->
     <PackageProjectUrl>http://github.com/Slesa/Lingua</PackageProjectUrl>
     <PackageLicenseUrl>http://github.com/Slesa/Lingua/blob/master/License.txt</PackageLicenseUrl>
+    <Version>1.1.0</Version>
     <!-- NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.3' ">1.6.0</NetStandardImplicitPackageVersion -->
   </PropertyGroup>
 
@@ -41,11 +42,4 @@
     <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.0.0" />
   </ItemGroup -->
 
-  <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
 </Project>
