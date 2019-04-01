@@ -55,8 +55,11 @@ if ($testsFailed) {
 
 # NuGet packaging
 
-Write-Host "Creating a nuget package in ${PackageOutputDirectory}"
+Write-Host "Creating a nuget package in ${PackageOutputDirectory} for ${Package}"
 
 $Package | ForEach-Object {
     Invoke-ExpressionExitCodeCheck "dotnet pack $_ --include-symbols -c ${Configuration} -o ${PackageOutputDirectory} /p:Version=${Version}"
 }
+
+Write-Host "Restoring path"
+cd ..
