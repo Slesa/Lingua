@@ -24,10 +24,10 @@ Invoke-Expression "dotnet --info"
 Write-Host "Change to src..."
 cd src
 Write-Host "Restoring packages..."
-Invoke-ExpressionExitCodeCheck "dotnet restore" -ErrorAction Stop
+Invoke-ExpressionExitCodeCheck "dotnet restore Lingua.sln" -ErrorAction Stop
 
 Write-Host "Building in ${Configuration}..."
-Invoke-ExpressionExitCodeCheck "dotnet build -c ${Configuration}" -ErrorAction Stop
+Invoke-ExpressionExitCodeCheck "dotnet build -c ${Configuration} Lingua.sln" -ErrorAction Stop
 
 
 # Test
