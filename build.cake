@@ -99,7 +99,7 @@ Task("Build")
   .Does( () => {
     var platform = new CakePlatform();
     var framework = platform.Family==PlatformFamily.Windows ? "net461" : "netcoreapp2.2";
-    /* var coreSettings = new DotNetCoreBuildSettings
+    var coreSettings = new DotNetCoreBuildSettings
     {
         ArgumentCustomization = args => CreateNugetArguments(args),
         //Framework = "netcoreapp2.0",
@@ -107,7 +107,7 @@ Task("Build")
         //OutputDirectory = buildPath,
         NoRestore = true,
     };
-    DotNetCoreBuild(linguaSolution, coreSettings); */
+    DotNetCoreBuild(linguaSolution, coreSettings);
 
     var corePath = buildPath + "/core";
     var corePublish = new DotNetCorePublishSettings
@@ -169,7 +169,8 @@ Task("Default")
   .IsDependentOn("VersionInfo")
   .IsDependentOn("Restore-NuGet-Packages")
   .IsDependentOn("Build")
-  .IsDependentOn("CreatePackages");
+  .IsDependentOn("CreatePackages")
+  .IsDependentOn("PublishPackages");
 
 Task("Deploy")
   .IsDependentOn("PublishPackages");
