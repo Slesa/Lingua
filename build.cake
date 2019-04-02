@@ -6,7 +6,6 @@ Information("Configuration is "+configuration);
 var target = Argument("target", "Default");
 Information("Target is "+target);
 
-
 //////////////////////////////////////////////////////////////////////
 // PREPARATION
 //////////////////////////////////////////////////////////////////////
@@ -28,6 +27,8 @@ var deployDir = new DirectoryPath( binDir.CombineWithFilePath("deploy").FullPath
 //////////////////////////////////////////////////////////////////////
 // PROPERTIES
 //////////////////////////////////////////////////////////////////////
+var platform = new CakePlatform();
+public bool IsWindows { get { return platform.Family==PlatformFamily.Windows; } }
 public bool IsLocalBuild { get { return BuildSystem.IsLocalBuild; } }
 public bool IsDevelop { get { return BranchName.ToLower()=="develop"; } }
 public bool IsMaster { get { return BranchName.ToLower()=="master"; } }
@@ -98,7 +99,7 @@ Task("Restore-NuGet-Packages")
 Task("Build")
   .Does( () => {
     var platform = new CakePlatform();
-    var framework = platform.Family==PlatformFamily.Windows ? "net461" : "netcoreapp2.2";
+    var framework = IsWindows ? "net461" : "netcoreapp2.2";
     var coreSettings = new DotNetCoreBuildSettings
     {
         ArgumentCustomization = args => CreateNugetArguments(args),
@@ -107,28 +108,31 @@ Task("Build")
         //OutputDirectory = buildPath,
         NoRestore = true,
     };
+    if (!IsWindows) coreSettings.Framework = framework;
     DotNetCoreBuild(linguaSolution, coreSettings);
 
     var corePath = buildPath + "/core";
     var corePublish = new DotNetCorePublishSettings
-     {
-         Framework = framework,
-         //NoBuild = true,
-         NoRestore = true,
-         Configuration = configuration,
-         OutputDirectory = corePath
-     };
-
+    {
+        Framework = framework,
+        //NoBuild = true,
+        NoRestore = true,
+        Configuration = configuration,
+        OutputDirectory = corePath
+    };
     DotNetCorePublish(linguaSolution, corePublish);
 
-    var wpfPath = buildPath + "/wpf";
-    var buildSettings = new MSBuildSettings()
+    if (IsWindows) {
+      var wpfPath = buildPath + "/wpf";
+      var buildSettings = new MSBuildSettings()
         .WithProperty("OutputPath", wpfPath)
         .WithProperty("Configuration", configuration);
-    MSBuild(demoSolution, buildSettings);
+      MSBuild(demoSolution, buildSettings);
+    }
 });
 
 Task("CreatePackages")
+  .WithCriteria( IsWindows )
   .Does( () => {
     var settings = new DotNetCorePackSettings
     {
@@ -143,6 +147,7 @@ Task("CreatePackages")
 });
 
 Task("PublishPackages")
+  .WithCriteria( !IsLocalBuild )
   .Does( () => {
     var packages = GetFiles(deployDir+"/*.nupkg");
     NuGetPush(packages, new NuGetPushSettings {
