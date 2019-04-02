@@ -1,7 +1,6 @@
 ﻿using System.Reactive;
 using ReactiveUI;
 using System;
-using Lingua;
 
 namespace Lingua.Demo.ViewModels
 {

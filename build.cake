@@ -97,7 +97,9 @@ Task("Restore-NuGet-Packages")
 
 Task("Build")
   .Does( () => {
-    var coreSettings = new DotNetCoreBuildSettings
+    var platform = new CakePlatform();
+    var framework = platform.Family==PlatformFamily.Windows ? "net461" : "netcoreapp2.2";
+    /* var coreSettings = new DotNetCoreBuildSettings
     {
         ArgumentCustomization = args => CreateNugetArguments(args),
         //Framework = "netcoreapp2.0",
@@ -105,10 +107,23 @@ Task("Build")
         //OutputDirectory = buildPath,
         NoRestore = true,
     };
-    DotNetCoreBuild(linguaSolution, coreSettings);
-    var outputPath = buildPath;
+    DotNetCoreBuild(linguaSolution, coreSettings); */
+
+    var corePath = buildPath + "/core";
+    var corePublish = new DotNetCorePublishSettings
+     {
+         Framework = framework,
+         //NoBuild = true,
+         NoRestore = true,
+         Configuration = configuration,
+         OutputDirectory = corePath
+     };
+
+    DotNetCorePublish(linguaSolution, corePublish);
+
+    var wpfPath = buildPath + "/wpf";
     var buildSettings = new MSBuildSettings()
-        .WithProperty("OutputPath", outputPath)
+        .WithProperty("OutputPath", wpfPath)
         .WithProperty("Configuration", configuration);
     MSBuild(demoSolution, buildSettings);
 });
