@@ -22,7 +22,7 @@ namespace Lingua.Demo.ViewModels
         string _expression;
         public string Expression { 
             get { return _expression; } 
-            set { this.RaiseAndSetIfChanged(ref _expression, value); }
+            private set { this.RaiseAndSetIfChanged(ref _expression, value); }
         }
         
         string _result;
@@ -33,11 +33,11 @@ namespace Lingua.Demo.ViewModels
 
         public ReactiveCommand<Unit, Unit> OnEvaluateCommand { get; }
 
-        public void OnEvaluate()
+        void OnEvaluate()
         {
             Result = "";
             TerminalReader.Open(Expression);
-            var result = (Prolog.Clause)Parser.Parse(TerminalReader);
+            Prolog.Clause result = (Prolog.Clause)Parser.Parse(TerminalReader);
             if (result != null)
             {
                 Terminal token = TerminalReader.ReadTerminal();
@@ -47,8 +47,8 @@ namespace Lingua.Demo.ViewModels
                     {
                         Result += $"{token.ElementType.Name}: {token.Text}" + Environment.NewLine;
                     }
-                    token = TerminalReader.ReadTerminal();
                 }
+                token = TerminalReader.ReadTerminal();
                 //Result = result; //.Value.ToString();
             }
 

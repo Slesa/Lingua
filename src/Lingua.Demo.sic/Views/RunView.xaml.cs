@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Lingua.Demo.Views
 {
-    public partial class RunView : UserControl
+    public class RunView : UserControl
     {
         public RunView()
         {

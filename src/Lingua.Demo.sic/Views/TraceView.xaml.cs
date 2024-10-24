@@ -1,12 +1,12 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace Lingua.Demo.Views
 {
-    public partial class RunView : UserControl
+    public class TraceView : UserControl
     {
-        public RunView()
+        public TraceView()
         {
             InitializeComponent();
         }

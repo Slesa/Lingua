@@ -1,3 +1,7 @@
+# 1.1.3
+* Update Avalonia to 11.1.4
+* Update other packages
+
 # 1.1.2
 * Update Avalonia to 0.7
 * Provide package for DotNet Core 2.0 and .NET 4.6.1

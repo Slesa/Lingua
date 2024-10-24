@@ -1,9 +1,5 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:Lingua.Demo.ViewModels"
-             x:Class="Lingua.Demo.Views.RunView"
-             x:DataType="vm:RunViewModel"
-             >
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
         <StackPanel>
           <TextBlock>Expression:</TextBlock>

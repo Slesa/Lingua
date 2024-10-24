@@ -1,9 +1,5 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:Lingua.Demo.ViewModels"
-             x:Class="Lingua.Demo.Views.TraceView"
-             x:DataType="vm:TraceViewModel"
-             >
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
         <Grid>
           <Grid.RowDefinitions>
