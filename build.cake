@@ -47,7 +47,7 @@ public string CurrentVersion() {
 
 var  linguaSolution = "src/Lingua.sln";
 var  linguaProject = "src/Lingua/Lingua.csproj";
-var  demoSolution = "src/LinguaDemo.sln";
+var  demoSolution = "src/Lingua.Demo.sln";
 
 ProcessArgumentBuilder CreateNugetArguments(ProcessArgumentBuilder args) {
     var relNotes = string.Join("\n", releaseNotes.Notes)
