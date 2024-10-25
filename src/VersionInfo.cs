@@ -6,9 +6,9 @@
 using System.Reflection;
 
 [assembly: AssemblyProduct("Lingua")]
-[assembly: AssemblyVersion("1.1.1")]
-[assembly: AssemblyFileVersion("1.1.1")]
-[assembly: AssemblyInformationalVersion("1.1.1.0")]
-[assembly: AssemblyCopyright("Copyright (c) Richard G. Todd 2010 - 2019")]
+[assembly: AssemblyVersion("1.1.3")]
+[assembly: AssemblyFileVersion("1.1.3")]
+[assembly: AssemblyInformationalVersion("1.1.3.0")]
+[assembly: AssemblyCopyright("Copyright (c) Richard G. Todd 2010 - 2024")]
 [assembly: AssemblyTrademark("MS Public License")]
 

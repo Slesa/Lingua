@@ -8,9 +8,12 @@
     <PackageId>Lingua.dll</PackageId>
     <PackageTags>Parser Generator Grammar Prolog</PackageTags>
     <PackageReleaseNotes>My Release Notes</PackageReleaseNotes>
-    <!-- PackageIconUrl>http://github.com/machine/machine.specifications/raw/master/Misc/Machine.Specifications-128x128.png</PackageIconUrl -->
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+<!--    <PackageLicenseExpression>MIT</PackageLicenseExpression>-->
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+      <!-- PackageIconUrl>http://github.com/machine/machine.specifications/raw/master/Misc/Machine.Specifications-128x128.png</PackageIconUrl -->
     <PackageProjectUrl>http://github.com/Slesa/Lingua</PackageProjectUrl>
-    <PackageLicenseUrl>http://github.com/Slesa/Lingua/blob/master/License.txt</PackageLicenseUrl>
+<!--    <PackageLicenseUrl>http://github.com/Slesa/Lingua/blob/master/License.txt</PackageLicenseUrl>-->
     <Version>1.1.0</Version>
     <!-- NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.3' ">1.6.0</NetStandardImplicitPackageVersion -->
   </PropertyGroup>
@@ -25,6 +28,11 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\License.txt" Pack="true" PackagePath=""/>
+    <None Include="..\..\Readme.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
+  
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
     <PackageReference Include="Microsoft.NETCore.App" Version="2.2.8" />
   </ItemGroup>
