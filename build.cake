@@ -149,10 +149,11 @@ Task("CreatePackages")
 Task("PublishPackages")
   .WithCriteria( !IsLocalBuild )
   .Does( () => {
+    var apikey = EnvironmentVariable("NUGET_APIKEY");
     var packages = GetFiles(deployDir+"/*.nupkg");
     NuGetPush(packages, new NuGetPushSettings {
         Source = "https://nuget.org",
-        ApiKey = "oy2lb3fjjur4feps73dqllx3uaj6chiu5ct4zqwgg2az7q"
+        ApiKey = apikey
     });
     /* var settings = new DotNetPublishSettings
     {
