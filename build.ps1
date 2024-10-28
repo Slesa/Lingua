@@ -67,7 +67,8 @@ if (!(Test-Path $InstallPath)) {
 if ($IsMacOS -or $IsLinux) {
     $ScriptPath = Join-Path $InstallPath 'dotnet-install.sh'
     (New-Object System.Net.WebClient).DownloadFile($DotNetUnixInstallerUri, $ScriptPath);
-    & bash $ScriptPath --jsonfile "$GlobalJsonPath" --install-dir "$InstallPath" --no-path
+    & $ScriptPath -Version "latest" -InstallDir $InstallPath --no-path
+#    & bash $ScriptPath --jsonfile "$GlobalJsonPath" --install-dir "$InstallPath" --no-path
 
     Remove-PathVariable "$InstallPath"
     $env:PATH = "$($InstallPath):$env:PATH"
@@ -75,7 +76,10 @@ if ($IsMacOS -or $IsLinux) {
 else {
     $ScriptPath = Join-Path $InstallPath 'dotnet-install.ps1'
     (New-Object System.Net.WebClient).DownloadFile($DotNetInstallerUri, $ScriptPath);
-    & $ScriptPath -JSonFile $GlobalJsonPath -InstallDir $InstallPath;
+    & $ScriptPath -Channel "6.0" -InstallDir $InstallPath;
+    & $ScriptPath -Channel "7.0" -InstallDir $InstallPath;
+    & $ScriptPath -Channel "8.0" -InstallDir $InstallPath;
+#    & $ScriptPath -JSonFile $GlobalJsonPath -InstallDir $InstallPath;
 
     Remove-PathVariable "$InstallPath"
     $env:PATH = "$InstallPath;$env:PATH"

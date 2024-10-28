@@ -24,3 +24,4 @@ TestResults
 src/VersionInfo.cs
 /tools/
 .idea/
+.dotnet/

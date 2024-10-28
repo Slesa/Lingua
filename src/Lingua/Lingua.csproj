@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Lingua allows the execution of Prolog code in .NET.</Description>
     <Authors>"R. Todd"; "J. Preiss"</Authors>
-    <TargetFrameworks>net40;net45;net48;netcoreapp3.1;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net48;netcoreapp3.1;net6.0;net7.0;net8.0</TargetFrameworks>
     <AssemblyName>Lingua</AssemblyName>
     <PackageId>Lingua.dll</PackageId>
     <PackageTags>Parser Generator Grammar Prolog</PackageTags>
@@ -41,7 +41,7 @@
     <DefineConstants>$(DefineConstants);NET40</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
 
