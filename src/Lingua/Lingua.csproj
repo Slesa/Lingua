@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Description>Lingua allows the execution of Prolog code in .NET.</Description>
     <Authors>"R. Todd"; "J. Preiss"</Authors>
-    <TargetFrameworks>net48;netcoreapp3.1;net6.0;net7.0;net8.0</TargetFrameworks>
     <AssemblyName>Lingua</AssemblyName>
     <PackageId>Lingua.dll</PackageId>
     <PackageTags>Parser Generator Grammar Prolog</PackageTags>
@@ -16,8 +15,16 @@
 <!--    <PackageLicenseUrl>http://github.com/Slesa/Lingua/blob/master/License.txt</PackageLicenseUrl>-->
     <Version>1.1.0</Version>
     <!-- NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.3' ">1.6.0</NetStandardImplicitPackageVersion -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(BuildServer)' != '' ">
+    <TargetFrameworks>net48;netcoreapp3.1;net6.0;net7.0;net8.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(BuildServer)' == '' ">
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
@@ -35,6 +42,12 @@
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
     <PackageReference Include="Microsoft.NETCore.App" Version="2.2.8" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\VersionInfo.cs">
+      <Link>VersionInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">

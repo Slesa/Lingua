@@ -1,3 +1,6 @@
+#tool nuget:?package=Machine.Specifications.Runner.Console&version=1.0.0
+
+
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
@@ -20,9 +23,9 @@ var binDir = new DirectoryPath( workingDir.CombineWithFilePath("bin").FullPath )
 var buildDir = new DirectoryPath( binDir.CombineWithFilePath("build").FullPath );
 var buildPath = buildDir.FullPath;
 var deployDir = new DirectoryPath( binDir.CombineWithFilePath("deploy").FullPath );
-//var testDir = new DirectoryPath( binDir.CombineWithFilePath("test").FullPath );
-//var testPath = testDir.FullPath;
-//var reportDir = new DirectoryPath( binDir.CombineWithFilePath("report").FullPath );
+var testDir = new DirectoryPath( binDir.CombineWithFilePath("test").FullPath );
+var testPath = testDir.FullPath;
+var reportDir = new DirectoryPath( binDir.CombineWithFilePath("report").FullPath );
 
 //////////////////////////////////////////////////////////////////////
 // PROPERTIES
@@ -45,15 +48,15 @@ public string CurrentVersion() {
     return version + ".0";
 }
 
-var  linguaSolution = "src/Lingua.sln";
-var  linguaProject = "src/Lingua/Lingua.csproj";
-var  demoSolution = "src/Lingua.Demo.sln";
+var Projects         	= GetFiles( srcDir.CombineWithFilePath("**/*.csproj").FullPath );
+var TestProjects     	= GetFiles( srcDir.CombineWithFilePath("**/*.Specs.csproj").FullPath );
+var  LinguaProject = "src/Lingua/Lingua.csproj";
 
 ProcessArgumentBuilder CreateNugetArguments(ProcessArgumentBuilder args) {
     var relNotes = string.Join("\n", releaseNotes.Notes)
         .Replace(",", " and");
 //        .Replace(",", "[MSBuild]::Escape(',')");
-    Information("Release notes: \n"+relNotes);
+    //Information("Release notes: \n"+relNotes);
     return args
         .Append("/p:Version="+version)
         .Append("/p:PackageReleaseNotes=\""+relNotes+"\"");
@@ -66,14 +69,15 @@ ProcessArgumentBuilder CreateNugetArguments(ProcessArgumentBuilder args) {
 Task("Clean")
   .Does(() =>
 {
-    if( !IsLocalBuild || !DirectoryExists(buildDir) || !DirectoryExists(deployDir) /*|| !DirectoryExists(testDir) || !DirectoryExists(reportDir)*/ )
+    if( !IsLocalBuild || !DirectoryExists(buildDir) || !DirectoryExists(deployDir) || !DirectoryExists(testDir) || !DirectoryExists(reportDir) )
     {
       CleanDirectory(buildDir);
       CleanDirectory(deployDir);
-      //CleanDirectory(testDir);
-      //CleanDirectory(reportDir);
+      CleanDirectory(testDir);
+      CleanDirectory(reportDir);
     }
 });
+
 
 Task("VersionInfo")
   .Does( () => {
@@ -88,48 +92,68 @@ Task("VersionInfo")
     });      
 });
 
+
 Task("Restore-NuGet-Packages")
   .Does( () => {
     var settings = new DotNetRestoreSettings {
         ArgumentCustomization = args => CreateNugetArguments(args),
-    };    
-    DotNetRestore(linguaSolution, settings);
+        MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor")
+    };
+    foreach(var project in Projects)
+      DotNetRestore(project.FullPath, settings);
 });
+
+
+string GetProjectName(FilePath csproj)
+{
+    var name = csproj.ToString();
+    return name.Replace(".csproj", "");
+}
 
 Task("Build")
   .Does( () => {
-    var platform = new CakePlatform();
-    //var framework = IsWindows ? "net461" : "netcoreapp2.2";
-    var coreSettings = new DotNetBuildSettings
+    foreach(var project in Projects)
+    {
+        var settings = new DotNetBuildSettings
+        {
+          ArgumentCustomization = args => CreateNugetArguments(args),
+          Configuration = configuration,
+          NoRestore = true,
+          MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor"),
+          OutputDirectory = buildDir.Combine(GetProjectName(project.GetFilename())).FullPath
+        };
+        DotNetBuild(project.FullPath, settings); 
+    }
+});
+
+
+Task("BuildTests")
+  .Does( () => {
+    var settings = new DotNetBuildSettings
     {
         ArgumentCustomization = args => CreateNugetArguments(args),
-        //Framework = "netcoreapp2.0",
         Configuration = configuration,
-        //OutputDirectory = buildPath,
         NoRestore = true,
+        MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor"),
+        OutputDirectory = testPath
     };
-    //if (!IsWindows) coreSettings.Framework = framework;
-    DotNetBuild(linguaSolution, coreSettings);
-
-    /*var corePath = buildPath + "/core";
-    var corePublish = new DotNetPublishSettings
+    foreach(var project in TestProjects)
     {
-        //Framework = framework,
-        //NoBuild = true,
-        NoRestore = true,
-        Configuration = configuration,
-        OutputDirectory = corePath
-    };
-    DotNetPublish(linguaSolution, corePublish);*/
-
-    /*if (IsWindows) {
-      var wpfPath = buildPath + "/wpf";
-      var buildSettings = new MSBuildSettings()
-        .WithProperty("OutputPath", wpfPath)
-        .WithProperty("Configuration", configuration);
-      MSBuild(demoSolution, buildSettings);
-    }*/
+        DotNetBuild(project.FullPath, settings); 
+    }
 });
+
+
+Task("RunTests")
+	.Does(() =>
+	{
+  	var specFiles = GetFiles( testDir.CombineWithFilePath("**/*.Specs.dll").FullPath );
+	  MSpec(specFiles, new MSpecSettings { 
+		   	OutputDirectory = reportDir.FullPath, 
+		    HtmlReport = true 
+		 });
+  });
+
 
 Task("CreatePackages")
   //.WithCriteria( IsWindows )
@@ -142,9 +166,11 @@ Task("CreatePackages")
         IncludeSymbols = true,
         NoRestore = true,
         NoBuild = true,
+        MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor")
     };
-    DotNetPack(linguaProject, settings);
+    DotNetPack(LinguaProject, settings);
 });
+
 
 Task("PublishPackages")
   .WithCriteria( !IsLocalBuild )
@@ -155,16 +181,8 @@ Task("PublishPackages")
         Source = "https://nuget.org",
         ApiKey = apikey
     });
-    /* var settings = new DotNetPublishSettings
-    {
-        ArgumentCustomization = args => CreateNugetArguments(args),
-        Configuration = configuration,
-        OutputDirectory = deployDir,
-        NoRestore = true,
-        NoBuild = true,
-    };
-    DotNetPublish(linguaProject, settings); */
 });
+
 
 //////////////////////////////////////////////////////////////////////
 // TARGETS
@@ -175,6 +193,8 @@ Task("Default")
   .IsDependentOn("VersionInfo")
   .IsDependentOn("Restore-NuGet-Packages")
   .IsDependentOn("Build")
+  .IsDependentOn("BuildTests")
+  .IsDependentOn("RunTests")
   .IsDependentOn("CreatePackages")
   .IsDependentOn("PublishPackages");
 

@@ -1,3 +1,7 @@
+# 1.1.4
+* Consolidate build files 
+* Build for different target frameworks on buildserver only
+
 # 1.1.3
 * Update Avalonia to 11.1.4
 * Update other packages
