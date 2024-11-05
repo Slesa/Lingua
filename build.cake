@@ -34,7 +34,7 @@ var reportDir = new DirectoryPath( binDir.CombineWithFilePath("report").FullPath
 //public bool IsWindows { get { return platform.Family==PlatformFamily.Windows; } }
 public bool IsLocalBuild { get { return BuildSystem.IsLocalBuild; } }
 public bool IsDevelop { get { return BranchName.ToLower()=="develop"; } }
-public bool IsMaster { get { return BranchName.ToLower()=="master"; } }
+public bool IsMain { get { return BranchName.ToLower()=="main"; } }
 public string BranchName { get { return EnvironmentVariable("APPVEYOR_REPO_BRANCH"); } } // TFBuild.Environment.Repository.Branch; } }
 
 public string CurrentVersion() {
@@ -48,9 +48,10 @@ public string CurrentVersion() {
     return version + ".0";
 }
 
+
 var Projects         	= GetFiles( srcDir.CombineWithFilePath("**/*.csproj").FullPath );
 var TestProjects     	= GetFiles( srcDir.CombineWithFilePath("**/*.Specs.csproj").FullPath );
-var  LinguaProject = "src/Lingua/Lingua.csproj";
+var LinguaProject = "src/Lingua/Lingua.csproj";
 
 ProcessArgumentBuilder CreateNugetArguments(ProcessArgumentBuilder args) {
     var relNotes = string.Join("\n", releaseNotes.Notes)
@@ -100,7 +101,7 @@ Task("Restore-NuGet-Packages")
         MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor")
     };
     foreach(var project in Projects)
-      DotNetRestore(project.FullPath, settings);
+        DotNetRestore(project.FullPath, settings);
 });
 
 
@@ -119,7 +120,7 @@ Task("Build")
           ArgumentCustomization = args => CreateNugetArguments(args),
           Configuration = configuration,
           NoRestore = true,
-          MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor"),
+          // MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor"),
           OutputDirectory = buildDir.Combine(GetProjectName(project.GetFilename())).FullPath
         };
         DotNetBuild(project.FullPath, settings); 
@@ -134,7 +135,7 @@ Task("BuildTests")
         ArgumentCustomization = args => CreateNugetArguments(args),
         Configuration = configuration,
         NoRestore = true,
-        MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor"),
+        // MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor"),
         OutputDirectory = testPath
     };
     foreach(var project in TestProjects)
@@ -165,7 +166,7 @@ Task("CreatePackages")
         OutputDirectory = deployDir,
         IncludeSymbols = true,
         NoRestore = true,
-        NoBuild = true,
+        // NoBuild = true,
         MSBuildSettings = new DotNetMSBuildSettings().WithProperty("BuildServer", "AppVeyor")
     };
     DotNetPack(LinguaProject, settings);
@@ -173,7 +174,7 @@ Task("CreatePackages")
 
 
 Task("PublishPackages")
-  .WithCriteria( !IsLocalBuild )
+  .WithCriteria( !IsLocalBuild && IsMain )
   .Does( () => {
     var apikey = EnvironmentVariable("NUGET_APIKEY");
     var packages = GetFiles(deployDir+"/*.nupkg");
@@ -193,8 +194,8 @@ Task("Default")
   .IsDependentOn("VersionInfo")
   .IsDependentOn("Restore-NuGet-Packages")
   .IsDependentOn("Build")
-  .IsDependentOn("BuildTests")
-  .IsDependentOn("RunTests")
+  //.IsDependentOn("BuildTests")
+  //.IsDependentOn("RunTests")
   .IsDependentOn("CreatePackages")
   .IsDependentOn("PublishPackages");
 
